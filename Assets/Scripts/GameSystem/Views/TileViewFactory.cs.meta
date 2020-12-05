@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b627f2e76e4e2d148a5479cd340b09a3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _darkTileView: {fileID: 7123233273849478104, guid: f5ad8121a908ed7419d5f5b80663e6e5, type: 3}
+  - _lightTileView: {fileID: 3919443721565128904, guid: a9e2fdb3df7fa824bb90c315aefa2b46, type: 3}
+  - _positionHelper: {fileID: 11400000, guid: 3b4cbbe402063874d80f618a6b9ad9c5, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

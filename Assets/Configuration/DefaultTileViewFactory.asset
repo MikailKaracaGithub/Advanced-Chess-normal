@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b627f2e76e4e2d148a5479cd340b09a3, type: 3}
+  m_Name: DefaultTileViewFactory
+  m_EditorClassIdentifier: 
+  _darkTileView: {fileID: 7123233273849478104, guid: f5ad8121a908ed7419d5f5b80663e6e5, type: 3}
+  _lightTileView: {fileID: 3919443721565128904, guid: a9e2fdb3df7fa824bb90c315aefa2b46, type: 3}
+  _positionHelper: {fileID: 11400000, guid: 3b4cbbe402063874d80f618a6b9ad9c5, type: 2}
