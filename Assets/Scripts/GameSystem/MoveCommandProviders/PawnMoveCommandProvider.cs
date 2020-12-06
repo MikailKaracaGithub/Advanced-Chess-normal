@@ -1,19 +1,15 @@
-﻿using GameSystem.Models;
-using GameSystem.MoveCommands;
-using MoveSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameSystem.MoveCommands;
+using GameSystem.Utils;
+using ReplaySystem;
 
 namespace GameSystem.MoveCommandProviders
 {
+    [MoveCommandProvider(PawnMoveCommandProvider.Name)]
     public class PawnMoveCommandProvider : AbstractMoveCommandProvider
     {
-        public static readonly string Name = "Pawn";
+        public const string Name = "Pawn";
 
-        public PawnMoveCommandProvider() : base(new PawnBasicMoveCommand() ) {}
+        public PawnMoveCommandProvider(ReplayManager replayManager) : base(new PawnBasicMoveCommand(replayManager), new PawnFirstMoveCommand(replayManager) ) {}
 
     }
 }

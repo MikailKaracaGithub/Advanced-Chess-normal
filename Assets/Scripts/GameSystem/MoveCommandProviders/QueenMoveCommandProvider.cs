@@ -1,12 +1,15 @@
 ﻿using GameSystem.MoveCommands;
+using GameSystem.Utils;
+using ReplaySystem;
 
 namespace GameSystem.MoveCommandProviders
 {
+    [MoveCommandProvider(QueenMoveCommandProvider.Name)]
     public class QueenMoveCommandProvider : AbstractMoveCommandProvider
     {
-        public static readonly string Name = "Queen";
+        public const string Name = "Queen";
 
-        public QueenMoveCommandProvider() : base(new QueenBasicMoveCommand()) { }
+        public QueenMoveCommandProvider(ReplayManager replayManager) : base(new QueenBasicMoveCommand(replayManager)) { }
 
     }
 }

@@ -21,15 +21,21 @@ namespace GameSystem.Views
 
         private void Start()
         {
+            _meshRenderer = GetComponentInChildren<MeshRenderer>();
+            _originalMaterial = _meshRenderer.sharedMaterial;
+
+            GameLoop.Instance.Initialized += OnGameInitialized;
+        }
+
+        private void OnGameInitialized(object sender, EventArgs e)
+        {
             var board = GameLoop.Instance.Board;
             var boardPosition = _positionHelper.ToBoardPosition(board, transform.position);
             var tile = board.TileAt(boardPosition);
 
             Model = tile;
-
-            _meshRenderer = GetComponentInChildren<MeshRenderer>();
-            _originalMaterial = _meshRenderer.sharedMaterial;
         }
+
         public Tile Model
         {
             get => _model;

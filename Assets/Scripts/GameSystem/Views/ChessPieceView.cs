@@ -17,7 +17,7 @@ namespace GameSystem.Views
         private string _movementName = null;
         public string MovementName => _movementName;
 
-        private ChessPiece _model;
+        private ChessPiece _model; 
         public ChessPiece Model 
         {
             get => _model;

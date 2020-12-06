@@ -1,22 +1,41 @@
 ﻿using BoardSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MoveSystem
 {
+    public class MoveCommandProviderChangedEventArgs<TPiece> : EventArgs where TPiece : class, IPiece
+    {
+        public IMoveCommandProvider<TPiece> MoveCommandProvider { get; }
+
+        public MoveCommandProviderChangedEventArgs(IMoveCommandProvider<TPiece> moveCommandProvider)
+        {
+            MoveCommandProvider = moveCommandProvider;
+        }
+    }
+
     public class MoveManager<TPiece> where TPiece : class, IPiece
     {
+        public event EventHandler<MoveCommandProviderChangedEventArgs<TPiece>> MoveCommandProviderChanged;
+
         private Dictionary<string, IMoveCommandProvider<TPiece>> _providers = new Dictionary<string, IMoveCommandProvider<TPiece>>();
         private Dictionary<TPiece, string> _pieceMovements = new Dictionary<TPiece, string>();
+
         private IMoveCommandProvider<TPiece> _activeProvider;
         private Board<TPiece> _board;
         private List<Tile> _validTiles = new List<Tile>();
+
+
 
         public MoveManager(Board<TPiece> board)
         {
             _board = board;
         }
-
+        public string MovementOf(TPiece piece)
+        {
+            return _pieceMovements[piece];
+        }
         public void Register(string name, IMoveCommandProvider<TPiece> provider)
         {
             if (_providers.ContainsKey(name))
@@ -36,7 +55,8 @@ namespace MoveSystem
 
         public IMoveCommandProvider<TPiece> Provider(TPiece piece)
         {
-            if (piece == null) return null;
+            if (piece == null)
+                return null;
 
             if (_pieceMovements.TryGetValue(piece, out var name))
             {
@@ -50,13 +70,29 @@ namespace MoveSystem
         public void ActivateFor(TPiece currentPiece)
         {
                 _activeProvider = Provider(currentPiece);
-                _validTiles = _activeProvider.Commands().SelectMany((command) => command.Tiles(_board, currentPiece)).ToList(); // ISSUE IN HERE
+            if (_activeProvider != null)
+            {
+                _validTiles = _activeProvider.Commands()
+                .Where((command) => command.CanExecute(_board, currentPiece))
+                .SelectMany((command) => command.Tiles(_board, currentPiece)).ToList();
+            }
+            else
+            { 
+                _validTiles.Clear();
+            }
+
+            OnMoveCommandProviderChanged(new MoveCommandProviderChangedEventArgs<TPiece>(_activeProvider));
         }
+
+
 
         public void Deactivate()
         {
             _validTiles.Clear();
+
             _activeProvider = null;
+
+            OnMoveCommandProviderChanged(new MoveCommandProviderChangedEventArgs<TPiece>(null));
         }
 
         public void Execute(TPiece piece, Tile tile)
@@ -67,7 +103,7 @@ namespace MoveSystem
             
                 if (foundCommand != null)
                 {
-                    foundCommand.Excecute(_board, piece, tile);
+                    foundCommand.Execute(_board, piece, tile);
     
                     _activeProvider = null;
                 }
@@ -78,5 +114,11 @@ namespace MoveSystem
         {
             return _validTiles;
         }
+        protected virtual void OnMoveCommandProviderChanged(MoveCommandProviderChangedEventArgs<TPiece> arg)
+        {
+            EventHandler<MoveCommandProviderChangedEventArgs<TPiece>> handler = MoveCommandProviderChanged;
+            handler?.Invoke(this, arg);
+        }
+
     }
 }
