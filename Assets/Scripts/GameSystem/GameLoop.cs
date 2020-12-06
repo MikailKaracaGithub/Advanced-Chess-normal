@@ -1,9 +1,11 @@
 ﻿using BoardSystem;
 using GameSystem.Models;
 using GameSystem.MoveCommandProviders;
+using GameSystem.States;
 using GameSystem.Views;
 using MoveSystem;
 using ReplaySystem;
+using StateSystem;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -15,30 +17,34 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     [SerializeField]
     private PositionHelper _positionHelper = null;
 
-    private ChessPiece _selectedPiece = null;
-    public bool IsLightTurn { get; internal set; } = true;
-
     public Board<ChessPiece> Board { get; } = new Board<ChessPiece>(8, 8);
 
-    private IMoveCommand<ChessPiece> _currentMoveCommand;
-
-    public ChessPiece SelectedPiece => _selectedPiece;
+    //public ChessPiece SelectedPiece => _selectedPiece;
 
     public MoveManager<ChessPiece> MoveManager { get; internal set; }
 
-    public ReplayManager ReplayManager { get; set; } = new ReplayManager();
+    private StateMachine<GameStateBase> _stateMachine;
 
     private void Awake()
     {
+        _stateMachine = new StateMachine<GameStateBase>();
+        var replayManager = new ReplayManager();
         MoveManager = new MoveManager<ChessPiece>(Board);
-        MoveManager.Register(PawnMoveCommandProvider.Name, new PawnMoveCommandProvider(ReplayManager));
-        MoveManager.Register(KnightMoveCommandProvider.Name, new KnightMoveCommandProvider(ReplayManager));
-        MoveManager.Register(KingMoveCommandProvider.Name, new KingMoveCommandProvider(ReplayManager));
-        MoveManager.Register(QueenMoveCommandProvider.Name, new QueenMoveCommandProvider(ReplayManager));
-        MoveManager.Register(RookMoveCommandProvider.Name, new RookMoveCommandProvider(ReplayManager));
-        MoveManager.Register(BishopMoveCommandProvider.Name, new BishopMoveCommandProvider(ReplayManager));
 
-        MoveManager.MoveCommandProviderChanged += OnMoveCommandProviderChanged;
+        var playGameState = new PlayGameState(Board, MoveManager);
+
+        _stateMachine.RegisterState(GameStates.Play, playGameState);
+        _stateMachine.RegisterState(GameStates.Replay, playGameState);
+        _stateMachine.MoveTo(GameStates.Play);
+
+        MoveManager.Register(PawnMoveCommandProvider.Name, new PawnMoveCommandProvider(playGameState, replayManager));
+        MoveManager.Register(KnightMoveCommandProvider.Name, new KnightMoveCommandProvider(playGameState, replayManager));
+        MoveManager.Register(KingMoveCommandProvider.Name, new KingMoveCommandProvider(playGameState, replayManager));
+        MoveManager.Register(QueenMoveCommandProvider.Name, new QueenMoveCommandProvider(playGameState, replayManager));
+        MoveManager.Register(RookMoveCommandProvider.Name, new RookMoveCommandProvider(playGameState, replayManager));
+        MoveManager.Register(BishopMoveCommandProvider.Name, new BishopMoveCommandProvider(playGameState, replayManager));
+
+
 
     }
 
@@ -51,48 +57,27 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     
     public void Select(ChessPiece chessPiece)
     {
-        if (chessPiece == null || chessPiece == _selectedPiece)
-            return;
-
-        if (chessPiece != null && chessPiece.IsLight != IsLightTurn)
-        {
-            var tile = Board.TileOf(chessPiece);
-            Select(tile);
-        }
-        else
-        {
-
-           
-            MoveManager.Deactivate();
-
-            _currentMoveCommand = null;
-
-            _selectedPiece = chessPiece;
-
-            MoveManager.ActivateFor(_selectedPiece);
-
-        }
+        _stateMachine.CurrentState.Select(chessPiece);
     }
 
     public void Select(Tile tile)
     {
-        if (_selectedPiece != null && _currentMoveCommand != null)
-        {
-            var tiles = _currentMoveCommand.Tiles(Board, _selectedPiece);
-            if (tiles.Contains(tile))
-            {
-                Board.UnHighlight(tiles);
+        _stateMachine.CurrentState.Select(tile);
+    }
 
-            _currentMoveCommand.Execute(Board, _selectedPiece, tile);
 
-            MoveManager.Deactivate();
+    public void Select(IMoveCommand<ChessPiece> moveCommand)
+    {
+        _stateMachine.CurrentState.Select(moveCommand);
+    }
 
-            _selectedPiece = null;
-            _currentMoveCommand = null;
-
-            IsLightTurn = !IsLightTurn;
-            }
-        }
+    public void Forward()
+    {
+        _stateMachine.CurrentState.Forward();
+    }
+    public void Backward()
+    {
+        _stateMachine.CurrentState.Backward();
     }
     protected virtual void OnInitialized(EventArgs arg)
     {
@@ -104,37 +89,6 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
         yield return new WaitForEndOfFrame();
 
         OnInitialized(EventArgs.Empty);
-    }
-
-    public void Select(IMoveCommand<ChessPiece> moveCommand)
-    {
-        if (_currentMoveCommand != null)
-            Board.UnHighlight(_currentMoveCommand.Tiles(Board, _selectedPiece));
-
-        _currentMoveCommand = moveCommand;
-
-        if (_currentMoveCommand != null)
-            Board.Highlight(_currentMoveCommand.Tiles(Board, _selectedPiece));
-
-    }
-
-    public void Forward()
-    {
-        ReplayManager.Forward();
-    }
-    public void Backward()
-    {
-        ReplayManager.Backward();
-    }
-
-    private void OnMoveCommandProviderChanged(object sender, MoveCommandProviderChangedEventArgs<ChessPiece> e)
-    {
-        if (_currentMoveCommand == null)
-            return;
-
-        var tiles = _currentMoveCommand.Tiles(Board, _selectedPiece);
-
-        Board.UnHighlight(tiles);
     }
 
     private void ConnectViewsToModel()

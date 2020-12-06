@@ -1,4 +1,5 @@
 ﻿using GameSystem.MoveCommands;
+using GameSystem.States;
 using GameSystem.Utils;
 using ReplaySystem;
 
@@ -9,7 +10,7 @@ namespace GameSystem.MoveCommandProviders
     {
         public const string Name = "Bishop";
 
-        public BishopMoveCommandProvider(ReplayManager replayManager) : base(new BishopBasicMoveCommand(replayManager)) { }
+        public BishopMoveCommandProvider(PlayGameState playGameState, ReplayManager replayManager) : base(playGameState,new BishopBasicMoveCommand(replayManager)) { }
 
     }
 }

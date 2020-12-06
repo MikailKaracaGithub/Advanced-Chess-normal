@@ -1,4 +1,5 @@
 ﻿using GameSystem.MoveCommands;
+using GameSystem.States;
 using GameSystem.Utils;
 using ReplaySystem;
 
@@ -9,7 +10,7 @@ namespace GameSystem.MoveCommandProviders
     {
         public const string Name = "Pawn";
 
-        public PawnMoveCommandProvider(ReplayManager replayManager) : base(new PawnBasicMoveCommand(replayManager), new PawnFirstMoveCommand(replayManager) ) {}
+        public PawnMoveCommandProvider(PlayGameState playGameState, ReplayManager replayManager) : base(playGameState, new PawnBasicMoveCommand(replayManager), new PawnFirstMoveCommand(replayManager) ) {}
 
     }
 }

@@ -10,7 +10,7 @@ namespace ReplaySystem
     {
         private List<IReplayableCommand> _commands = new List<IReplayableCommand>();
         private int _seekPosition = -1;
-
+        public bool IsAtEnd => _commands.Count == _seekPosition + 1;
 
         public void Execute(IReplayableCommand command)
         {

@@ -1,4 +1,5 @@
 ﻿using GameSystem.MoveCommands;
+using GameSystem.States;
 using GameSystem.Utils;
 using ReplaySystem;
 
@@ -9,7 +10,7 @@ namespace GameSystem.MoveCommandProviders
     {
         public const string Name = "King";
 
-        public KingMoveCommandProvider(ReplayManager replayManager) : base(new KingBasicMoveCommand(replayManager),
+        public KingMoveCommandProvider(PlayGameState playGameState, ReplayManager replayManager) : base(playGameState, new KingBasicMoveCommand(replayManager),
             new KingSideCastleMove(replayManager)) { }
 
     }

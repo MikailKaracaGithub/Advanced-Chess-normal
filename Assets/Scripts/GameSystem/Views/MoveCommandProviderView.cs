@@ -40,19 +40,14 @@ namespace GameSystem.Views
 
             if(moveCommandProvider != null)
             {
-                var board = GameLoop.Instance.Board;
-                var piece = GameLoop.Instance.SelectedPiece;
 
                 var moveCommands = moveCommandProvider.Commands();
+
                 foreach (var moveCommand in moveCommands)
                 {
-                    if (!moveCommand.CanExecute(board, piece))
-                        continue;
-
                     var view = GameObject.Instantiate(_moveCommandView, transform);
 
                     view.Model = moveCommand;
-
 
                     _moveCommandViews.Add(view);
                 }
