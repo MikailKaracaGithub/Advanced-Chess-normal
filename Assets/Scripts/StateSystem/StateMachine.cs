@@ -21,11 +21,9 @@ namespace StateSystem
 
         public void MoveTo(string name)
         {
-            var state = _states[name];
-
             CurrentState?.OnExit();
 
-            CurrentState = state;
+            CurrentState = _states[name];
 
             CurrentState?.OnEnter();
         }

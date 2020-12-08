@@ -32,9 +32,10 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
         MoveManager = new MoveManager<ChessPiece>(Board);
 
         var playGameState = new PlayGameState(Board, MoveManager);
+        var replayState = new ReplayGameState(replayManager);
 
         _stateMachine.RegisterState(GameStates.Play, playGameState);
-        _stateMachine.RegisterState(GameStates.Replay, playGameState);
+        _stateMachine.RegisterState(GameStates.Replay, replayState);
         _stateMachine.MoveTo(GameStates.Play);
 
         MoveManager.Register(PawnMoveCommandProvider.Name, new PawnMoveCommandProvider(playGameState, replayManager));
