@@ -9,7 +9,6 @@ namespace GameSystem.MoveCommandProviders
     public class RookMoveCommandProvider : AbstractMoveCommandProvider
     {
         public const string Name = "Rook";
-
         public RookMoveCommandProvider(PlayGameState playGameState, ReplayManager replayManager) : base(playGameState, new RookBasicMoveCommand(replayManager)) { }
 
     }

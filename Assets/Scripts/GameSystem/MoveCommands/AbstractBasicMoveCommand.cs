@@ -18,8 +18,8 @@ namespace GameSystem.MoveCommands
 
         public virtual bool CanExecute(Board<ChessPiece> board, ChessPiece piece)
         {
-            var validTIles = Tiles(board, piece);
-            return validTIles.Count > 0;
+            var validTiles = Tiles(board, piece);
+            return validTiles.Count > 0;
         }
 
         public virtual void Execute(Board<ChessPiece> board, ChessPiece piece, Tile toTile)

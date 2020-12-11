@@ -6,19 +6,20 @@ using System.Threading.Tasks;
 using GameSystem.Models;
 using MoveSystem;
 using UnityEngine;
+using Utils;
 
 namespace GameSystem.Views
 {
+    [RequireComponent(typeof(ObjectPool))]
     public class MoveCommandProviderView : MonoBehaviour
     {
-        [SerializeField]
-        private MoveCommandView _moveCommandView = null;
-
         private List<MoveCommandView> _moveCommandViews = new List<MoveCommandView>();
+        private ObjectPool _pool;
 
         private void Start()
         {
             GameLoop.Instance.Initialized += OnGameInitialized;
+            _pool = GetComponent<ObjectPool>();
         }
 
         private void OnGameInitialized(object sender, EventArgs e)
@@ -31,7 +32,7 @@ namespace GameSystem.Views
         {
             foreach (var moveCommand in _moveCommandViews)
             {
-                GameLoop.Destroy(moveCommand.gameObject);
+                moveCommand.gameObject.SetActive(false);
             }
 
             _moveCommandViews.Clear();
@@ -45,10 +46,10 @@ namespace GameSystem.Views
 
                 foreach (var moveCommand in moveCommands)
                 {
-                    var view = GameObject.Instantiate(_moveCommandView, transform);
+                    var go = _pool.GetPooledObject();
+                    var view = go.GetComponent<MoveCommandView>();
 
                     view.Model = moveCommand;
-
                     _moveCommandViews.Add(view);
                 }
             }

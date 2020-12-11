@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1692609758727193358}
   - component: {fileID: 4755653495247816226}
   - component: {fileID: 2086641113068865552}
+  - component: {fileID: 4452056416958244542}
   m_Layer: 5
   m_Name: MoveCommandProviderView
   m_TagString: Untagged
@@ -116,3 +117,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &4452056416958244542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436620849170607438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a851482b55dccb49a9beabdb022d80d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _amount: 10
+  _pooledObject: {fileID: 946028952119863362, guid: 2f2dc78e2ebf9f94c91cf212b4083cf3, type: 3}
+  _parent: {fileID: 624726649271420885}
